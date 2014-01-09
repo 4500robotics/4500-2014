@@ -7,6 +7,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Joystick;
+
 import java.lang.Math;
 
 /**
@@ -34,4 +35,5 @@ public class DriveStick extends Joystick{
     public double getDeadTwist(){
         return Math.abs(getAxis(Joystick.AxisType.kTwist))<deadZone ? getAxis(Joystick.AxisType.kTwist):0;
     }
+
 }
