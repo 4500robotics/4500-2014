@@ -21,6 +21,8 @@ public class RobotTemplate extends SimpleRobot {
     Talon rearRight;
     RobotDrive mainDrive;
     double DEADZONE=.05;
+    
+    //Counter for teleOp loops
     int count=0;
     
     public void robotInit(){
@@ -30,8 +32,6 @@ public class RobotTemplate extends SimpleRobot {
         frontRight= new Talon(3);
         rearRight= new Talon(4);
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
-        //mainDrive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
-        //mainDrive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
     }
     
     public void autonomous() {
@@ -40,25 +40,29 @@ public class RobotTemplate extends SimpleRobot {
 
     public void operatorControl() {
         while(isOperatorControl()&&isEnabled()){
+            //Simple Cartesian Drive
             /* mainDrive.mecanumDrive_Cartesian(
             driveStick.getAxis(Joystick.AxisType.kX),
             driveStick.getAxis(Joystick.AxisType.kY), 0,0);
-        */
-          mainDrive.mecanumDrive_Cartesian(
+            */
+            
+            //Cartesian Drive with Deadzones and Turning
+            mainDrive.mecanumDrive_Cartesian(
                   joystickDeadzone(driveStick.getAxis(Joystick.AxisType.kX)),
                   joystickDeadzone(driveStick.getAxis(Joystick.AxisType.kY)),
                   driveStick.getAxis(Joystick.AxisType.kTwist),0);
           
-            /*mainDrive.mecanumDrive_Cartesian(
-             * driveStick.getAxis(Joystick.AxisType.kX),
-             * driveStick.getAxis(Joystick.AxisType.kY),
-             * 0, 0);*/
                
+            //Simple Polar test Drive with throttle as magnitude, NOTE: is backwards
             /*mainDrive.mecanumDrive_Polar(
              * driveStick.getAxis(Joystick.AxisType.kThrottle),
              * 0, 0);*/
             
+            
+            //Simple curve Test Drive
             //mainDrive.drive(driveStick.getAxis(Joystick.AxisType.kThrottle), 0);
+            
+            //logger
             if(count%500==0){System.out.println(count+": "+
                     frontLeft.getSpeed()+", "+
                     rearLeft.getSpeed()+", "+
@@ -69,6 +73,8 @@ public class RobotTemplate extends SimpleRobot {
         }
     }
     
+    
+    //creates deadzones ie. returns zero when within DEADZONE from center
     private double joystickDeadzone(double a){
         if(Math.abs(a)>DEADZONE){
            return a ;
@@ -76,6 +82,8 @@ public class RobotTemplate extends SimpleRobot {
         
         return 0;
     }
+    
+    
     public void disabled(){
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
     }
