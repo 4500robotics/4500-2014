@@ -20,7 +20,7 @@ public class RobotTemplate extends SimpleRobot {
     Talon frontRight;
     Talon rearRight;
     RobotDrive mainDrive;
-    double DEADZONE=.05;
+    double DEADZONE=.08;
     
     //Counter for teleOp loops
     int count=0;
