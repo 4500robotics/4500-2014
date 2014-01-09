@@ -6,32 +6,33 @@
 /*----------------------------------------------------------------------------*/
 
 package edu.wpi.first.wpilibj.templates;
-// libraries
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
 import edu.wpi.first.wpilibj.Talon;
 
 public class RobotTemplate extends SimpleRobot {
-//initializing stuff
-    Joystick driveStick;
+
+    DriveStick driveStick;
     Talon frontLeft;
     Talon rearLeft; 
     Talon frontRight;
     Talon rearRight;
     RobotDrive mainDrive;
     double DEADZONE=.05;
+    
+    //Counter for teleOp loops
     int count=0;
     
     public void robotInit(){
-        //initializing stuff
-        driveStick= new Joystick(1);
+        driveStick= new DriveStick(1, DEADZONE);
         frontLeft= new Talon(1);
         rearLeft= new Talon(2);
         frontRight= new Talon(3);
         rearRight= new Talon(4);
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
-           }
+    }
     
     public void autonomous() {
             
@@ -39,50 +40,44 @@ public class RobotTemplate extends SimpleRobot {
 
     public void operatorControl() {
         while(isOperatorControl()&&isEnabled()){
+            //Simple Cartesian Drive
             /* mainDrive.mecanumDrive_Cartesian(
-            driveStick.getAxis(Joystick.AxisType.kX),
-            driveStick.getAxis(Joystick.AxisType.kY), 0,0);
+                driveStick.getAxis(Joystick.AxisType.kX),
+                driveStick.getAxis(Joystick.AxisType.kY), 0,0);
             */
-            //Cartesian drive mode with deadzones and twist, with out
+            
+            //Cartesian Drive with Deadzones and Turning
             mainDrive.mecanumDrive_Cartesian(
-                  joystickDeadzone(driveStick.getAxis(Joystick.AxisType.kX)),
-                  joystickDeadzone(driveStick.getAxis(Joystick.AxisType.kY)),
-                  driveStick.getAxis(Joystick.AxisType.kTwist),0);
+                driveStick.getDeadAxisX(),
+                driveStick.getDeadAxisY(),
+                driveStick.getDeadAxisY(),0);
           
-            //Basic Drive Cartesian Code
-            /*mainDrive.mecanumDrive_Cartesian(
-             * driveStick.getAxis(Joystick.AxisType.kX),
-             * driveStick.getAxis(Joystick.AxisType.kY),
-             * 0, 0);*/
-            
-            //Basic Drive Polar
+               
+            //Simple Polar test Drive with throttle as magnitude, NOTE: is backwards
             /*mainDrive.mecanumDrive_Polar(
-             * driveStick.getAxis(Joystick.AxisType.kThrottle),
-             * 0, 0);*/
+                * driveStick.getAxis(Joystick.AxisType.kThrottle),
+                * 0, 0);*/
             
             
-            //Super Basic curve Drive with throttle as magnitude
+            //Simple curve Test Drive
             //mainDrive.drive(driveStick.getAxis(Joystick.AxisType.kThrottle), 0);
             
-            //Logging system
+            //logger
             if(count%500==0){System.out.println(count+": "+
-                    frontLeft.getSpeed()+", "+
-                    rearLeft.getSpeed()+", "+
-                    frontRight.getSpeed()+", "+
-                    rearRight.getSpeed());
+                frontLeft.getSpeed()+", "+
+                rearLeft.getSpeed()+", "+
+                frontRight.getSpeed()+", "+
+                rearRight.getSpeed());
             }
             
+            //Increase number of teleop cycles
             count++;
         }
     }
     
-    private double joystickDeadzone(double a){
-        if(Math.abs(a)>DEADZONE){
-           return a ;
-        }
-        
-        return 0;
-    }
+    
+    
+    
     public void disabled(){
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
     }
