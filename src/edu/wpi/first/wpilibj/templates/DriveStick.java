@@ -29,4 +29,8 @@ public class DriveStick extends Joystick{
     public double getDeadAxisY(){
         return getAxis(Joystick.AxisType.kY)<deadZone ? getAxis(Joystick.AxisType.kY):0;
     }
+    
+    public double getDeadTwist(){
+        return getAxis(Joystick.AxisType.kTwist)<deadZone ? getAxis(Joystick.AxisType.kTwist):0;
+    }
 }
