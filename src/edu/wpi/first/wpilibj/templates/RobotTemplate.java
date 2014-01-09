@@ -42,21 +42,21 @@ public class RobotTemplate extends SimpleRobot {
         while(isOperatorControl()&&isEnabled()){
             //Simple Cartesian Drive
             /* mainDrive.mecanumDrive_Cartesian(
-            driveStick.getAxis(Joystick.AxisType.kX),
-            driveStick.getAxis(Joystick.AxisType.kY), 0,0);
+                driveStick.getAxis(Joystick.AxisType.kX),
+                driveStick.getAxis(Joystick.AxisType.kY), 0,0);
             */
             
             //Cartesian Drive with Deadzones and Turning
             mainDrive.mecanumDrive_Cartesian(
-                  joystickDeadzone(driveStick.getAxis(Joystick.AxisType.kX)),
-                  joystickDeadzone(driveStick.getAxis(Joystick.AxisType.kY)),
-                  driveStick.getAxis(Joystick.AxisType.kTwist),0);
+                driveStick.getDeadAxisX(),
+                driveStick.getDeadAxisY(),
+                driveStick.getDeadAxisY(),0);
           
                
             //Simple Polar test Drive with throttle as magnitude, NOTE: is backwards
             /*mainDrive.mecanumDrive_Polar(
-             * driveStick.getAxis(Joystick.AxisType.kThrottle),
-             * 0, 0);*/
+                * driveStick.getAxis(Joystick.AxisType.kThrottle),
+                * 0, 0);*/
             
             
             //Simple curve Test Drive
@@ -64,24 +64,18 @@ public class RobotTemplate extends SimpleRobot {
             
             //logger
             if(count%500==0){System.out.println(count+": "+
-                    frontLeft.getSpeed()+", "+
-                    rearLeft.getSpeed()+", "+
-                    frontRight.getSpeed()+", "+
-                    rearRight.getSpeed());
+                frontLeft.getSpeed()+", "+
+                rearLeft.getSpeed()+", "+
+                frontRight.getSpeed()+", "+
+                rearRight.getSpeed());
             }
+            
+            //Increase number of teleop cycles
             count++;
         }
     }
     
     
-    //creates deadzones ie. returns zero when within DEADZONE from center
-    private double joystickDeadzone(double a){
-        if(Math.abs(a)>DEADZONE){
-           return a ;
-        }
-        
-        return 0;
-    }
     
     
     public void disabled(){
