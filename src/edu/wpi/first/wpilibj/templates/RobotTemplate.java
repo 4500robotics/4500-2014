@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Talon;
 
 public class RobotTemplate extends SimpleRobot {
 
-    Joystick driveStick;
+    DriveStick driveStick;
     Talon frontLeft;
     Talon rearLeft; 
     Talon frontRight;
@@ -26,7 +26,7 @@ public class RobotTemplate extends SimpleRobot {
     int count=0;
     
     public void robotInit(){
-        driveStick= new Joystick(1);
+        driveStick= new DriveStick(1, DEADZONE);
         frontLeft= new Talon(1);
         rearLeft= new Talon(2);
         frontRight= new Talon(3);

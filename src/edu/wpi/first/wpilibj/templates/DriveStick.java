@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class DriveStick extends Joystick{
     
-    int deadZone;
+    double deadZone;
     
-    public DriveStick(int port,int deadZoneIn){
+    public DriveStick(int port,double deadZoneIn){
         super(port);
         
         deadZone=deadZoneIn;
