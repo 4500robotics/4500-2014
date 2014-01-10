@@ -50,7 +50,7 @@ public class RobotTemplate extends SimpleRobot {
             mainDrive.mecanumDrive_Cartesian(
                 driveStick.getDeadAxisX(),
                 driveStick.getDeadAxisY(),
-                driveStick.getDeadAxisY(),0);
+                driveStick.getDeadTwist(),0);
           
                
             //Simple Polar test Drive with throttle as magnitude, NOTE: is backwards
