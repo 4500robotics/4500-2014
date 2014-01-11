@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj.templates;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
@@ -15,10 +16,12 @@ import edu.wpi.first.wpilibj.Talon;
 public class RobotTemplate extends SimpleRobot {
 
     DriveStick driveStick;
+    Joystick secondstick;
     Talon frontLeft;
     Talon rearLeft; 
     Talon frontRight;
     Talon rearRight;
+    Compressor compress;
     RobotDrive mainDrive;
     double DEADZONE=.08;
     
@@ -32,6 +35,7 @@ public class RobotTemplate extends SimpleRobot {
         frontRight= new Talon(3);
         rearRight= new Talon(4);
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
+        compress = new Compressor(20,20);
     }
     
     public void autonomous() {
