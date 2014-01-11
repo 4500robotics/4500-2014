@@ -40,6 +40,8 @@ public class RobotTemplate extends SimpleRobot {
 
     public void operatorControl() {
         while(isOperatorControl()&&isEnabled()){
+            
+            driveStick.update();
             //Simple Cartesian Drive
             /* mainDrive.mecanumDrive_Cartesian(
                 driveStick.getAxis(Joystick.AxisType.kX),
