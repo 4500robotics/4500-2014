@@ -16,24 +16,28 @@ import java.lang.Math;
  */
 public class DriveStick extends Joystick{
     
-    double deadZone;
+    double deadZone,xAxis,yAxis,twist;
     
     public DriveStick(int port,double deadZoneIn){
         super(port);
         
         deadZone=deadZoneIn;
     }
-    
+    public void update(){
+        xAxis=getAxis(Joystick.AxisType.kX);
+        yAxis=getAxis(Joystick.AxisType.kY);
+        twist=getAxis(Joystick.AxisType.kTwist);
+    }
     public double getDeadAxisX(){
-        return Math.abs(getAxis(Joystick.AxisType.kX))<deadZone ? getAxis(Joystick.AxisType.kX):0;
+        return Math.abs(xAxis)>deadZone ? xAxis:0;
     }
     
     public double getDeadAxisY(){
-        return Math.abs(getAxis(Joystick.AxisType.kY))<deadZone ? getAxis(Joystick.AxisType.kY):0;
+        return Math.abs(yAxis)>deadZone ? yAxis:0;
     }
     
     public double getDeadTwist(){
-        return Math.abs(getAxis(Joystick.AxisType.kTwist))<deadZone ? getAxis(Joystick.AxisType.kTwist):0;
+        return Math.abs(twist)>deadZone ? twist:0;
     }
 
 }
