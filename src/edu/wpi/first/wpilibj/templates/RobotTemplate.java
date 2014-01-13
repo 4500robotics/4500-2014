@@ -27,13 +27,13 @@ public class RobotTemplate extends SimpleRobot {
     double DEADZONE=.08;
     Solenoid pistup;
     Solenoid pistdown;
-    Pnumatics engage;
     
     //Counter for teleOp loops
     int count=0;
     
     public void robotInit(){
         driveStick= new DriveStick(1, DEADZONE);
+        secondStick=new Joystick(2);
         frontLeft= new Talon(1);
         rearLeft= new Talon(2);
         frontRight= new Talon(3);
@@ -42,7 +42,6 @@ public class RobotTemplate extends SimpleRobot {
         compress=new Compressor(1,1);
         pistup=new Solenoid(1);
         pistdown=new Solenoid(2);
-        engage =new Pnumatics();
     }
     
     public void compressor() {
@@ -71,18 +70,19 @@ public class RobotTemplate extends SimpleRobot {
                 driveStick.getDeadAxisY(),
                 driveStick.getDeadTwist(),0);
           
-            if (secondStick.getRawButton(3)) {
-                System.out.print("Button 3");
+             if (secondStick.getRawButton(3)) {
                 pistup.set(true);
+                pistdown.set(false);
             }
-            else if (secondStick.getRawButton(4)) {
-                System.out.print("Button 4");
+            else if (secondStick.getRawButton(2)) {
                 pistdown.set(true);
+                pistup.set(false);
             }
             else {
                 pistdown.set(false);
-                pistup.set(false);
+                pistup.set(false); 
             }
+        
                
             //Simple Polar test Drive with throttle as magnitude, NOTE: is backwards
             /*mainDrive.mecanumDrive_Polar(
