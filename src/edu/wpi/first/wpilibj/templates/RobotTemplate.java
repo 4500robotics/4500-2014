@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Talon;
 public class RobotTemplate extends SimpleRobot {
 
     DriveStick driveStick;
-    Joystick secondstick;
+    Joystick secondStick;
     Talon frontLeft;
     Talon rearLeft; 
     Talon frontRight;
