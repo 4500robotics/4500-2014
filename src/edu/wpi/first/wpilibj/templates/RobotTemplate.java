@@ -70,16 +70,19 @@ public class RobotTemplate extends SimpleRobot {
                 driveStick.getDeadAxisX(),
                 driveStick.getDeadAxisY(),
                 driveStick.getDeadTwist(),0);
-          if (secondStick.getRawButton(3)) {
-              pistup.set(true);
-          }
-          else if (secondStick.getRawButton(4)) {
-              pistdown.set(true);
-          }
-          else {
-              pistdown.set(false);
-              pistup.set(false);
-          }
+          
+            if (secondStick.getRawButton(3)) {
+                System.out.print("Button 3");
+                pistup.set(true);
+            }
+            else if (secondStick.getRawButton(4)) {
+                System.out.print("Button 4");
+                pistdown.set(true);
+            }
+            else {
+                pistdown.set(false);
+                pistup.set(false);
+            }
                
             //Simple Polar test Drive with throttle as magnitude, NOTE: is backwards
             /*mainDrive.mecanumDrive_Polar(
