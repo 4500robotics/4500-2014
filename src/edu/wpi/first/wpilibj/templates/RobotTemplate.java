@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.Talon;
 
 public class RobotTemplate extends SimpleRobot {
 
-    DriveStick driveStick;
-    Joystick secondStick;
+    JoyStickCustom driveStick;
+    JoyStickCustom secondStick;
     Talon frontLeft;
     Talon rearLeft; 
     Talon frontRight;
@@ -27,13 +27,14 @@ public class RobotTemplate extends SimpleRobot {
     double DEADZONE=.08;
     Solenoid pistup;
     Solenoid pistdown;
+    Pnumatics armJoint;
     
     //Counter for teleOp loops
     int count=0;
     
     public void robotInit(){
-        driveStick= new DriveStick(1, DEADZONE);
-        secondStick=new Joystick(2);
+        driveStick= new JoyStickCustom(1, DEADZONE);
+        secondStick=new JoyStickCustom(2, DEADZONE);
         frontLeft= new Talon(1);
         rearLeft= new Talon(2);
         frontRight= new Talon(3);
@@ -42,6 +43,7 @@ public class RobotTemplate extends SimpleRobot {
         compress=new Compressor(1,1);
         pistup=new Solenoid(1);
         pistdown=new Solenoid(2);
+        armJoint=new Pnumatics(1,2);
     }
     
     public void compressor() {
@@ -58,11 +60,7 @@ public class RobotTemplate extends SimpleRobot {
         while(isOperatorControl()&&isEnabled()){
             
             driveStick.update();
-            //Simple Cartesian Drive
-            /* mainDrive.mecanumDrive_Cartesian(
-                driveStick.getAxis(Joystick.AxisType.kX),
-                driveStick.getAxis(Joystick.AxisType.kY), 0,0);
-            */
+            secondStick.update();
             
             //Cartesian Drive with Deadzones and Turning
             mainDrive.mecanumDrive_Cartesian(
@@ -70,28 +68,7 @@ public class RobotTemplate extends SimpleRobot {
                 driveStick.getDeadAxisY(),
                 driveStick.getDeadTwist(),0);
           
-             if (secondStick.getRawButton(3)) {
-                pistup.set(true);
-                pistdown.set(false);
-            }
-            else if (secondStick.getRawButton(2)) {
-                pistdown.set(true);
-                pistup.set(false);
-            }
-            else {
-                pistdown.set(false);
-                pistup.set(false); 
-            }
-        
-               
-            //Simple Polar test Drive with throttle as magnitude, NOTE: is backwards
-            /*mainDrive.mecanumDrive_Polar(
-                * driveStick.getAxis(Joystick.AxisType.kThrottle),
-                * 0, 0);*/
-            
-            
-            //Simple curve Test Drive
-            //mainDrive.drive(driveStick.getAxis(Joystick.AxisType.kThrottle), 0);
+            moveArm();
             
             //logger
             /*if(count%500==0){System.out.println(count+": "+
@@ -106,10 +83,29 @@ public class RobotTemplate extends SimpleRobot {
         }
     }
     
-    
+    public void moveArm(){
+            if (secondStick.getButtonPressed(3)) {
+                 /*pistup.set(true);
+                 pistdown.set(false);*/
+                 armJoint.up();
+            }
+            else if (secondStick.getButtonPressed(2)) {
+                /*pistdown.set(true);
+                pistup.set(false);*/
+                 armJoint.down();
+            }
+            else {
+                /*pistdown.set(false);
+                pistup.set(false); */
+                 armJoint.stay();
+            }
+    }
     
     
     public void disabled(){
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
+        armJoint.stay();
+        pistup.set(false);
+        pistdown.set(false);
     }
 }

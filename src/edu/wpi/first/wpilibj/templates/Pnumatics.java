@@ -6,12 +6,34 @@
 
 package edu.wpi.first.wpilibj.templates;
 
+import edu.wpi.first.wpilibj.Solenoid;
+
 /**
  *
  * @author DE
  */
-public class Pnumatics {
-    public void pnumatics(){
+public class Pnumatics{
+    
+    Solenoid pistTop;
+    Solenoid pistBottom;
+    
+    public Pnumatics(int portTop, int portBottom){
+       pistTop= new Solenoid(portBottom);
+       pistBottom= new Solenoid(portTop);
+    }
+    
+    public void up(){
+        pistTop.set(false);
+        pistBottom.set(true);
+    }
+    
+    public void down(){
+        pistTop.set(false);
+        pistBottom.set(true);  
+    }
         
+    public void stay(){
+        pistTop.set(false);
+        pistBottom.set(true);
     }
 }
