@@ -45,11 +45,7 @@ public class RobotTemplate extends SimpleRobot {
         armJoint=new Pneumatics(1,2);
     }
     
-    public void compressor() {
-        
-        compress.start();
-    
-    }
+
     
     public void autonomous() {
             
@@ -60,6 +56,7 @@ public class RobotTemplate extends SimpleRobot {
             
             driveStick.update();
             secondStick.update();
+            compress.start();
             
             //Cartesian Drive with Deadzones and Turning
             mainDrive.mecanumDrive_Cartesian(
