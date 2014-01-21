@@ -8,7 +8,6 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -24,10 +23,10 @@ public class RobotTemplate extends SimpleRobot {
     Talon rearRight;
     Compressor compress;
     RobotDrive mainDrive;
-    double DEADZONE=.08;
+    final double DEADZONE=.08;
     Solenoid pistup;
     Solenoid pistdown;
-    Pnumatics armJoint;
+    Pneumatics armJoint;
     
     //Counter for teleOp loops
     int count=0;
@@ -43,7 +42,7 @@ public class RobotTemplate extends SimpleRobot {
         compress=new Compressor(1,1);
         pistup=new Solenoid(1);
         pistdown=new Solenoid(2);
-        armJoint=new Pnumatics(1,2);
+        armJoint=new Pneumatics(1,2);
     }
     
     public void compressor() {
@@ -84,12 +83,12 @@ public class RobotTemplate extends SimpleRobot {
     }
     
     public void moveArm(){
-            if (secondStick.getButtonPressed(3)) {
+            if (secondStick.getButtonPressed(3)&&!secondStick.getButtonPressed(2)) {
                  /*pistup.set(true);
                  pistdown.set(false);*/
                  armJoint.up();
             }
-            else if (secondStick.getButtonPressed(2)) {
+            else if (!secondStick.getButtonPressed(3)&&secondStick.getButtonPressed(2)) {
                 /*pistdown.set(true);
                 pistup.set(false);*/
                  armJoint.down();

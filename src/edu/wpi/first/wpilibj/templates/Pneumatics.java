@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.Solenoid;
  *
  * @author DE
  */
-public class Pnumatics{
+public class Pneumatics{
     
     Solenoid pistTop;
     Solenoid pistBottom;
     
-    public Pnumatics(int portTop, int portBottom){
+    public Pneumatics(int portTop, int portBottom){
        pistTop= new Solenoid(portBottom);
        pistBottom= new Solenoid(portTop);
     }
