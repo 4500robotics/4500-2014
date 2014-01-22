@@ -23,13 +23,13 @@ public class Pneumatics{
     }
     
     public void up(){
-        pistTop.set(false);
-        pistBottom.set(true);
+        pistTop.set(true);
+        pistBottom.set(false);
     }
     
     public void down(){
-        pistTop.set(true);
-        pistBottom.set(false);  
+        pistTop.set(false);
+        pistBottom.set(true);  
     }
         
     public void stay(){

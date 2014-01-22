@@ -8,10 +8,12 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 
 public class RobotTemplate extends SimpleRobot {
 
@@ -21,6 +23,7 @@ public class RobotTemplate extends SimpleRobot {
     Talon rearLeft; 
     Talon frontRight;
     Talon rearRight;
+    Talon winch;
     Compressor compress;
     RobotDrive mainDrive;
     final double DEADZONE=.08;
@@ -28,6 +31,11 @@ public class RobotTemplate extends SimpleRobot {
     Solenoid pistdown;
     Pneumatics armJoint;
     Pneumatics handJoint;
+    
+    Encoder winchStop;
+    Potentiometer armStop;
+    Potentiometer handStop;
+    
     
     //Counter for teleOp loops
     int count=0;
@@ -39,6 +47,7 @@ public class RobotTemplate extends SimpleRobot {
         rearLeft= new Talon(2);
         frontRight= new Talon(3);
         rearRight= new Talon(4);
+        winch = new Talon(5);
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
         compress=new Compressor(1,1);
         pistup=new Solenoid(1);
@@ -81,12 +90,12 @@ public class RobotTemplate extends SimpleRobot {
     }
     
     public void moveArm(){
-            if (secondStick.getButtonPressed(6)&&!secondStick.getButtonPressed(7)) {
+            if (secondStick.getDeadAxisX()>.5) {
                  /*pistup.set(true);
                  pistdown.set(false);*/
                  armJoint.up();
             }
-            else if (!secondStick.getButtonPressed(6)&&secondStick.getButtonPressed(7)) {
+            else if (secondStick.getDeadAxisX()<-.5) {
                 /*pistdown.set(true);
                 pistup.set(false);*/
                  armJoint.down();
@@ -98,24 +107,31 @@ public class RobotTemplate extends SimpleRobot {
             }
     }
     
-        public void moveHand(){
-            if (secondStick.getButtonPressed(11)&&!secondStick.getButtonPressed(10)) {
-                 /*pistup.set(true);
-                 pistdown.set(false);*/
-                 handJoint.up();
-            }
-            else if (!secondStick.getButtonPressed(11)&&secondStick.getButtonPressed(10)) {
-                /*pistdown.set(true);
-                pistup.set(false);*/
-                 handJoint.down();
-            }
-            else {
-                /*pistdown.set(false);
-                pistup.set(false); */
-                 handJoint.stay();
-            }
+    public void moveHand(){
+        if (secondStick.getButtonPressed(3)&&!secondStick.getButtonPressed(2)) {
+             /*pistup.set(true);
+             pistdown.set(false);*/
+             handJoint.up();
+        }
+        else if (!secondStick.getButtonPressed(3)&&secondStick.getButtonPressed(2)) {
+            /*pistdown.set(true);
+            pistup.set(false);*/
+             handJoint.down();
+        }
+        else {
+            /*pistdown.set(false);
+            pistup.set(false); */
+             handJoint.stay();
+        }
     }
     
+    public void winch(){
+        if(secondStick.getButtonReleased(5)){
+            winch.set(.30);
+           
+        }
+    }
+        
     public void disabled(){
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
         armJoint.stay();
