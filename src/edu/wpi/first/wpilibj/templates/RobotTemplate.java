@@ -14,14 +14,6 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
 
-
-
-public enum leverState{
-    RAISING,LOWERING, HOLDING
-}
-
-
-
 public class RobotTemplate extends SimpleRobot {
 
     JoyStickCustom driveStick;
@@ -30,43 +22,49 @@ public class RobotTemplate extends SimpleRobot {
     Talon rearLeft; 
     Talon frontRight;
     Talon rearRight;
+    
     Compressor compress;
     RobotDrive mainDrive;
     final double DEADZONE=.08;
     
+    
+    protected final static int RAISING=0,LOWERING=1;
     Pneumatics armJoint;
-    Pneumatics handJoint;
-    Pneumatics winch;
-    
-    winchState winchS;
-    leverState armS;
-    leverState handS;
-    
     AnalogPotentiometer armP;
+    
+    Pneumatics handJoint;
     AnalogPotentiometer handP;
+    
+    protected final static int WINDING=0,RELEASING=1, HOLDING=2;
+    Talon winch;
+    Pneumatics winchRelease;
+    WinchState winchS;
     Encoder winchE;
-    
-    
+    int releaseStartTime=0,releaseWaitTime=100;
+    protected final static double WINCHSPEED=.5,WINCHPOSISTION1=.5;
+
     //Counter for teleOp loops
     int count=0;
     
     public void robotInit(){
         driveStick= new JoyStickCustom(1, DEADZONE);
         secondStick=new JoyStickCustom(2, DEADZONE);
+        
         frontLeft= new Talon(1);
         rearLeft= new Talon(2);
         frontRight= new Talon(3);
         rearRight= new Talon(4);
+        
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
         compress=new Compressor(1,1);
         
         armJoint=new Pneumatics(1,2);
         handJoint=new Pneumatics(3,4);
-        winch=new Pneumatics(5,6);
+        winchRelease=new Pneumatics(5,6);
+        winch= new Talon(5);
+        
+        winchS.setState(HOLDING);
     }
-    
-
-    
     
     public void autonomous() {
             
@@ -86,6 +84,8 @@ public class RobotTemplate extends SimpleRobot {
                 driveStick.getDeadTwist(),0);
           
             moveArm();
+            moveHand();
+            winch();
             
             //logger
             /*if(count%500==0){System.out.println(count+": "+
@@ -112,20 +112,40 @@ public class RobotTemplate extends SimpleRobot {
             }
     }
     
-        private void moveHand(){
-            if (secondStick.getButtonPressed(11)&&!secondStick.getButtonPressed(10)) {
-                 handJoint.up();
-            }
-            else if (!secondStick.getButtonPressed(11)&&secondStick.getButtonPressed(10)) {
-                 handJoint.down();
-            }
-            else {
-                 handJoint.stay();
-            }
-    }
-        
-        private void winch(){
-            
+    private void moveHand(){
+        if (secondStick.getButtonPressed(11)&&!secondStick.getButtonPressed(10)) {
+             handJoint.up();
+        }
+        else if (!secondStick.getButtonPressed(11)&&secondStick.getButtonPressed(10)) {
+             handJoint.down();
+        }
+        else {
+             handJoint.stay();
+        }
+}
+
+    private void winch(){
+            if(winchS.getState()==WINDING){
+                if(winchE.getDistance()<=WINCHPOSISTION1){
+                    winch.set(WINCHSPEED);
+                }else{
+                    winchS.setState(HOLDING);
+                }
+            }else if(winchS.getState()==HOLDING){
+                if(secondStick.getButtonReleased(3)&&winchE.getDistance()<=WINCHPOSISTION1){
+                    winchS.setState(WINDING);
+                }else if(secondStick.getButtonReleased(3)&&winchE.getDistance()>=WINCHPOSISTION1){
+                    releaseStartTime=count;
+                    winchS.setState(RELEASING);
+                }
+            }else if(winchS.getState()==RELEASING){
+                if(count-releaseStartTime<releaseWaitTime){
+                    winchRelease.up();
+                }else{
+                    winchRelease.stay();
+                    winchE.reset();
+                }
+            }else winchS.setState(HOLDING);
         }
     
     public void disabled(){
