@@ -28,6 +28,7 @@ public class RobotTemplate extends SimpleRobot {
     Solenoid pistup;
     Solenoid pistdown;
     Pneumatics armJoint;
+    Pneumatics handJoint;
     
     //Counter for teleOp loops
     int count=0;
@@ -46,11 +47,7 @@ public class RobotTemplate extends SimpleRobot {
         armJoint=new Pneumatics(1,2);
     }
     
-    public void compressor() {
-        
-        compress.start();
-    
-    }
+
     
     
     public void autonomous() {
@@ -62,6 +59,7 @@ public class RobotTemplate extends SimpleRobot {
             
             driveStick.update();
             secondStick.update();
+            compress.start();
             
             //Cartesian Drive with Deadzones and Turning
             mainDrive.mecanumDrive_Cartesian(
@@ -85,12 +83,12 @@ public class RobotTemplate extends SimpleRobot {
     }
     
     public void moveArm(){
-            if (secondStick.getButtonPressed(3)&&!secondStick.getButtonPressed(2)) {
+            if (secondStick.getButtonPressed(6)&&!secondStick.getButtonPressed(7)) {
                  /*pistup.set(true);
                  pistdown.set(false);*/
                  armJoint.up();
             }
-            else if (!secondStick.getButtonPressed(3)&&secondStick.getButtonPressed(2)) {
+            else if (!secondStick.getButtonPressed(6)&&secondStick.getButtonPressed(7)) {
                 /*pistdown.set(true);
                 pistup.set(false);*/
                  armJoint.down();
@@ -102,6 +100,23 @@ public class RobotTemplate extends SimpleRobot {
             }
     }
     
+        public void moveHand(){
+            if (secondStick.getButtonPressed(11)&&!secondStick.getButtonPressed(10)) {
+                 /*pistup.set(true);
+                 pistdown.set(false);*/
+                 handJoint.up();
+            }
+            else if (!secondStick.getButtonPressed(11)&&secondStick.getButtonPressed(10)) {
+                /*pistdown.set(true);
+                pistup.set(false);*/
+                 handJoint.down();
+            }
+            else {
+                /*pistdown.set(false);
+                pistup.set(false); */
+                 handJoint.stay();
+            }
+    }
     
     public void disabled(){
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
