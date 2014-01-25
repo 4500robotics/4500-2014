@@ -10,8 +10,16 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Encoder;
+
+
+
+public enum leverState{
+    RAISING,LOWERING, HOLDING
+}
+
 
 
 public class RobotTemplate extends SimpleRobot {
@@ -25,10 +33,19 @@ public class RobotTemplate extends SimpleRobot {
     Compressor compress;
     RobotDrive mainDrive;
     final double DEADZONE=.08;
-    Solenoid pistup;
-    Solenoid pistdown;
+    
     Pneumatics armJoint;
     Pneumatics handJoint;
+    Pneumatics winch;
+    
+    winchState winchS;
+    leverState armS;
+    leverState handS;
+    
+    AnalogPotentiometer armP;
+    AnalogPotentiometer handP;
+    Encoder winchE;
+    
     
     //Counter for teleOp loops
     int count=0;
@@ -42,9 +59,10 @@ public class RobotTemplate extends SimpleRobot {
         rearRight= new Talon(4);
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
         compress=new Compressor(1,1);
-        pistup=new Solenoid(1);
-        pistdown=new Solenoid(2);
+        
         armJoint=new Pneumatics(1,2);
+        handJoint=new Pneumatics(3,4);
+        winch=new Pneumatics(5,6);
     }
     
 
@@ -82,46 +100,37 @@ public class RobotTemplate extends SimpleRobot {
         }
     }
     
-    public void moveArm(){
+    private void moveArm(){
             if (secondStick.getButtonPressed(6)&&!secondStick.getButtonPressed(7)) {
-                 /*pistup.set(true);
-                 pistdown.set(false);*/
                  armJoint.up();
             }
             else if (!secondStick.getButtonPressed(6)&&secondStick.getButtonPressed(7)) {
-                /*pistdown.set(true);
-                pistup.set(false);*/
                  armJoint.down();
             }
             else {
-                /*pistdown.set(false);
-                pistup.set(false); */
                  armJoint.stay();
             }
     }
     
-        public void moveHand(){
+        private void moveHand(){
             if (secondStick.getButtonPressed(11)&&!secondStick.getButtonPressed(10)) {
-                 /*pistup.set(true);
-                 pistdown.set(false);*/
                  handJoint.up();
             }
             else if (!secondStick.getButtonPressed(11)&&secondStick.getButtonPressed(10)) {
-                /*pistdown.set(true);
-                pistup.set(false);*/
                  handJoint.down();
             }
             else {
-                /*pistdown.set(false);
-                pistup.set(false); */
                  handJoint.stay();
             }
     }
+        
+        private void winch(){
+            
+        }
     
     public void disabled(){
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
         armJoint.stay();
-        pistup.set(false);
-        pistdown.set(false);
+        handJoint.stay();
     }
 }
