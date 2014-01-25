@@ -29,8 +29,11 @@ public class RobotTemplate extends SimpleRobot {
     final double DEADZONE=.08;
     Solenoid pistup;
     Solenoid pistdown;
+    Solenoid winchEng;
+    Solenoid winchDis;
     Pneumatics armJoint;
     Pneumatics handJoint;
+    Pneumatics winchP;
     
     Encoder winchStop;
     Potentiometer armStop;
@@ -53,6 +56,8 @@ public class RobotTemplate extends SimpleRobot {
         pistup=new Solenoid(1);
         pistdown=new Solenoid(2);
         armJoint=new Pneumatics(1,2);
+        winchP=new Pneumatics(3,4);
+        
     }
     
 
