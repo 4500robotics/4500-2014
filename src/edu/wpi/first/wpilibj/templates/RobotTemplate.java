@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.SimpleRobot;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
 
+
 public class RobotTemplate extends SimpleRobot {
 
     JoyStickCustom driveStick;
@@ -50,6 +51,7 @@ public class RobotTemplate extends SimpleRobot {
         compress.start();
     
     }
+    
     
     public void autonomous() {
             
