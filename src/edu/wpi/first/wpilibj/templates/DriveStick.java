@@ -14,12 +14,12 @@ import java.lang.Math;
  *
  * @author Daedalus
  */
-public class JoyStickCustom extends Joystick{
+public class DriveStick extends Joystick{
     
     double deadZone,xAxis,yAxis,twist;
     boolean buttonPressed[],buttonReleased[];
     
-    public JoyStickCustom(int port,double deadZoneIn){
+    public DriveStick(int port,double deadZoneIn){
         super(port);
         
         deadZone=deadZoneIn;
