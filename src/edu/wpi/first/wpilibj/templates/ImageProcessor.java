@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.camera.*;
  * @author DE
  */
 public class ImageProcessor {
-    AxisCamera camera;
-    ColorImage currentImage;
-    
+    private AxisCamera camera;
+    private ColorImage currentImage;
+    private int imageNumber;
     
     
     /**
@@ -28,7 +28,7 @@ public class ImageProcessor {
      */
     ImageProcessor() throws AxisCameraException, NIVisionException{
         camera = AxisCamera.getInstance("10.45.0.47");
-        
+        imageNumber = 0;
         //sets the camera up with default values
         writeCameraBrightness(100);
         writeCameraColorLevel(100);
@@ -52,7 +52,10 @@ public class ImageProcessor {
      */
     public void update() throws AxisCameraException, NIVisionException{
         if(camera.freshImage()){//only get a new image if it exists
+            currentImage.free();//the image is stored in a c array so even though 
+                                //java has a garbage collector we still need to manually free the image
             currentImage = camera.getImage();
+            System.out.println("Got image number"+(++imageNumber));
         }
     }
     

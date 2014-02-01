@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.camera.AxisCameraException;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
+
+
+
 public class RobotTemplate extends SimpleRobot {
 
     
@@ -54,12 +57,11 @@ public class RobotTemplate extends SimpleRobot {
     }
     
     
-    public void run(){
-        System.out.println(this.processor.getCameraMaxFPS());
-        
+    public void run(){        
         try {
                 
                 processor.update();
+                
                 /*ParticleAnalysisReport reports[] = processor.getOrderedReport(0, 50, 0, 50, 0, 50);//should find a black rectangle
                 
                 for(int i = 0;i<reports.length;i++){
