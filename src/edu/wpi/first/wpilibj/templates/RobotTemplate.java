@@ -27,7 +27,7 @@ public class RobotTemplate extends SimpleRobot {
     RobotDrive mainDrive;
     final double DEADZONE=.08;
     
-    
+    //objects for running the arm and hand
     protected final static int RAISING=0,LOWERING=1;
     Pneumatics armJoint;
     AnalogPotentiometer armP;
@@ -35,13 +35,14 @@ public class RobotTemplate extends SimpleRobot {
     Pneumatics handJoint;
     AnalogPotentiometer handP;
     
+    //objects for running the winch system
     protected final static int WINDING=0,RELEASING=1, HOLDING=2;
     Talon winch;
     Pneumatics winchRelease;
     WinchState winchS;
     Encoder winchE;
     int releaseStartTime=0,releaseWaitTime=100;
-    protected final static double WINCHSPEED=.5,WINCHPOSISTION1=.5;
+    protected final static double WINCHSPEED=.5,WINCHPOSISTION=.5;
 
     //Counter for teleOp loops
     int count=0;
@@ -73,8 +74,11 @@ public class RobotTemplate extends SimpleRobot {
     public void operatorControl() {
         while(isOperatorControl()&&isEnabled()){
             
+            //updating joysticks
             driveStick.update();
             secondStick.update();
+            
+            
             compress.start();
             
             //Cartesian Drive with Deadzones and Turning
@@ -83,6 +87,7 @@ public class RobotTemplate extends SimpleRobot {
                 driveStick.getDeadAxisY(),
                 driveStick.getDeadTwist(),0);
           
+            //calls the 
             moveArm();
             moveHand();
             winch();
@@ -126,24 +131,26 @@ public class RobotTemplate extends SimpleRobot {
 
     private void winch(){
             if(winchS.getState()==WINDING){
-                if(winchE.getDistance()<=WINCHPOSISTION1){
-                    winch.set(WINCHSPEED);
+                if(winchE.getDistance()<=WINCHPOSISTION){//wind the winch until the arm is pulled back far enough
+                    winchRelease.stay(); //make sure that the winch is engaged with the pistons
+                    winch.set(WINCHSPEED);//run the winch motor at the 
                 }else{
-                    winchS.setState(HOLDING);
+                    winch.set(0);
+                    winchS.setState(HOLDING);//set the state to holding when the winch excedes the predetermined distance
                 }
-            }else if(winchS.getState()==HOLDING){
-                if(secondStick.getButtonReleased(3)&&winchE.getDistance()<=WINCHPOSISTION1){
-                    winchS.setState(WINDING);
-                }else if(secondStick.getButtonReleased(3)&&winchE.getDistance()>=WINCHPOSISTION1){
-                    releaseStartTime=count;
+            }else if(winchS.getState()==HOLDING){//holds the winch "still" while waiting for the firing input
+                    winch.set(0);//keep the motor still
+                if(secondStick.getButtonReleased(3)&&winchE.getDistance()>=WINCHPOSISTION){
+                    releaseStartTime=count;//get the "time" that the winch was released
                     winchS.setState(RELEASING);
                 }
             }else if(winchS.getState()==RELEASING){
-                if(count-releaseStartTime<releaseWaitTime){
+                if(count-releaseStartTime<releaseWaitTime){//releasing the winch for the set amount of "time"
                     winchRelease.up();
-                }else{
+                }else{//after that time allow the pistons to return to their defalt state
                     winchRelease.stay();
-                    winchE.reset();
+                    winchE.reset();//reset the encoder
+                    winchS.setState(WINDING);
                 }
             }else winchS.setState(HOLDING);
         }

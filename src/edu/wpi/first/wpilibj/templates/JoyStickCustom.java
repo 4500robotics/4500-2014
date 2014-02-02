@@ -38,11 +38,12 @@ public class JoyStickCustom extends Joystick{
         
     }
     public void update(){
-        
+        //compare the current buttons compared to the previous button
         for(int x=1;x<=12;x++){
            buttonReleased[x]= buttonPressed[x]&&!getRawButton(x);
         }
         
+        //get the pushed buttons on this update cycle
         for(int x=1;x<=12;x++){
            buttonPressed[x]= getRawButton(x);
         }
@@ -51,6 +52,8 @@ public class JoyStickCustom extends Joystick{
         yAxis=getAxis(Joystick.AxisType.kY);
         twist=getAxis(Joystick.AxisType.kTwist);
     }
+    
+    //create deadzones for the joysticks
     public double getDeadAxisX(){
         return Math.abs(xAxis)>deadZone ? xAxis:0;
     }
@@ -66,6 +69,7 @@ public class JoyStickCustom extends Joystick{
     public boolean getButtonPressed(int in){
         return buttonPressed[in];
     }
+    
     
     public boolean getButtonReleased(int in){
         return buttonReleased[in];
