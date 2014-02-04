@@ -18,14 +18,16 @@ public class RobotTemplate extends SimpleRobot {
 
     JoyStickCustom driveStick;
     JoyStickCustom secondStick;
+    final double DEADZONE=.08;
+    
     Talon frontLeft;
-    Talon rearLeft; 
+    Talon rearLeft;
     Talon frontRight;
     Talon rearRight;
     
     Compressor compress;
+    
     RobotDrive mainDrive;
-    final double DEADZONE=.08;
     
     //objects for running the arm and hand
     protected final static int RAISING=0,LOWERING=1;
@@ -61,6 +63,9 @@ public class RobotTemplate extends SimpleRobot {
         
         armJoint=new Pneumatics(1,2);
         handJoint=new Pneumatics(3,4);
+        handP = new AnalogPotentiometer(2);
+        
+        
         winchRelease=new Pneumatics(5,6);
         winch= new Talon(5);
         
@@ -159,5 +164,10 @@ public class RobotTemplate extends SimpleRobot {
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
         armJoint.stay();
         handJoint.stay();
+    }
+    
+    public void test(){
+        System.out.println("Potetiometer 1"+handP.get());
+        System.out.println("Encoder 1"+winchE.get());
     }
 }
