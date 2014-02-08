@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.interfaces.Potentiometer;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Encoder;
 
 public class RobotTemplate extends SimpleRobot {
 
@@ -23,44 +23,49 @@ public class RobotTemplate extends SimpleRobot {
     Talon rearLeft; 
     Talon frontRight;
     Talon rearRight;
-    Talon winch;
+    
     Compressor compress;
     RobotDrive mainDrive;
     final double DEADZONE=.08;
-    Solenoid pistup;
-    Solenoid pistdown;
-    Solenoid winchEng;
-    Solenoid winchDis;
+    
+    Winch winch;
+    
+    protected final static int RAISING=0,LOWERING=1;
     Pneumatics armJoint;
+    AnalogPotentiometer armP;
+    
     Pneumatics handJoint;
-    Pneumatics winchP;
+    AnalogPotentiometer handP;
     
-    Encoder winchStop;
-    Potentiometer armStop;
-    Potentiometer handStop;
-    
-    
+    /*protected final static int WINDING=0,RELEASING=1, HOLDING=2;
+    Talon winch;
+    Pneumatics winchRelease;
+    WinchState winchS;
+    Encoder winchE;
+    int releaseStartTime=0,releaseWaitTime=100;
+    protected final static double WINCHSPEED=.5,WINCHPOSISTION1=.5;*/
+
     //Counter for teleOp loops
     int count=0;
     
     public void robotInit(){
         driveStick= new JoyStickCustom(1, DEADZONE);
         secondStick=new JoyStickCustom(2, DEADZONE);
+        
         frontLeft= new Talon(1);
         rearLeft= new Talon(2);
         frontRight= new Talon(3);
         rearRight= new Talon(4);
-        winch = new Talon(5);
+        
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
         compress=new Compressor(1,1);
-        pistup=new Solenoid(1);
-        pistdown=new Solenoid(2);
+        
         armJoint=new Pneumatics(1,2);
-        winchP=new Pneumatics(3,4);
+        handJoint=new Pneumatics(3,4);
+        
+        winch = new Winch(secondStick);
         
     }
-    
-
     
     public void autonomous() {
             
@@ -80,6 +85,8 @@ public class RobotTemplate extends SimpleRobot {
                 driveStick.getDeadTwist(),0);
           
             moveArm();
+            moveHand();
+            winch.update(count);
             
             //logger
             /*if(count%500==0){System.out.println(count+": "+
@@ -94,53 +101,35 @@ public class RobotTemplate extends SimpleRobot {
         }
     }
     
-    public void moveArm(){
-            if (secondStick.getDeadAxisX()>.5) {
-                 /*pistup.set(true);
-                 pistdown.set(false);*/
+    private void moveArm(){
+            if (secondStick.getButtonPressed(6)&&!secondStick.getButtonPressed(7)) {
                  armJoint.up();
             }
-            else if (secondStick.getDeadAxisX()<-.5) {
-                /*pistdown.set(true);
-                pistup.set(false);*/
+            else if (!secondStick.getButtonPressed(6)&&secondStick.getButtonPressed(7)) {
                  armJoint.down();
             }
             else {
-                /*pistdown.set(false);
-                pistup.set(false); */
                  armJoint.stay();
             }
     }
     
-    public void moveHand(){
-        if (secondStick.getButtonPressed(3)&&!secondStick.getButtonPressed(2)) {
-             /*pistup.set(true);
-             pistdown.set(false);*/
+    private void moveHand(){
+        if (secondStick.getButtonPressed(11)&&!secondStick.getButtonPressed(10)) {
              handJoint.up();
         }
-        else if (!secondStick.getButtonPressed(3)&&secondStick.getButtonPressed(2)) {
-            /*pistdown.set(true);
-            pistup.set(false);*/
+        else if (!secondStick.getButtonPressed(11)&&secondStick.getButtonPressed(10)) {
              handJoint.down();
         }
         else {
-            /*pistdown.set(false);
-            pistup.set(false); */
              handJoint.stay();
         }
-    }
+}
+
     
-    public void winch(){
-        if(secondStick.getButtonReleased(5)){
-            winch.set(.30);
-           
-        }
-    }
         
     public void disabled(){
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
         armJoint.stay();
-        pistup.set(false);
-        pistdown.set(false);
+        handJoint.stay();
     }
 }
