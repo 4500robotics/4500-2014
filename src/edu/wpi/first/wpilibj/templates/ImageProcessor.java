@@ -27,11 +27,11 @@ public class ImageProcessor {
      * current image that the camera is receiving.
      */
     ImageProcessor() throws AxisCameraException, NIVisionException{
-        camera = AxisCamera.getInstance("10.45.0.47");
+        camera = AxisCamera.getInstance("10.45.0.11");
         imageNumber = 0;
         //sets the camera up with default values
-        writeCameraBrightness(100);
-        writeCameraColorLevel(100);
+        writeCameraBrightness(50);
+        writeCameraColorLevel(50);
         writeCameraCompression(0);//very little to no compression
         writeCameraExposureControl(AxisCamera.ExposureT.automatic);
         writeCameraExposurePriority(AxisCamera.ExposurePriorityT.imageQuality);
