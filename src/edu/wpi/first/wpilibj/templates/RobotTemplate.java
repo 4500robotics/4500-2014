@@ -19,17 +19,18 @@ public class RobotTemplate extends SimpleRobot {
 
     JoyStickCustom driveStick;
     JoyStickCustom secondStick;
+    final double DEADZONE=.08;
+    
     Talon frontLeft;
-    Talon rearLeft; 
+    Talon rearLeft;
     Talon frontRight;
     Talon rearRight;
     
     Compressor compress;
+    
     RobotDrive mainDrive;
-    final double DEADZONE=.08;
     
-    Winch winch;
-    
+    //objects for running the arm and hand
     protected final static int RAISING=0,LOWERING=1;
     Pneumatics armJoint;
     AnalogPotentiometer armP;
@@ -37,13 +38,14 @@ public class RobotTemplate extends SimpleRobot {
     Pneumatics handJoint;
     AnalogPotentiometer handP;
     
-    /*protected final static int WINDING=0,RELEASING=1, HOLDING=2;
+    //objects for running the winch system
+    protected final static int WINDING=0,RELEASING=1, HOLDING=2;
     Talon winch;
     Pneumatics winchRelease;
     WinchState winchS;
     Encoder winchE;
     int releaseStartTime=0,releaseWaitTime=100;
-    protected final static double WINCHSPEED=.5,WINCHPOSISTION1=.5;*/
+    protected final static double WINCHSPEED=.5,WINCHPOSISTION=.5;
 
     //Counter for teleOp loops
     int count=0;
@@ -74,8 +76,11 @@ public class RobotTemplate extends SimpleRobot {
     public void operatorControl() {
         while(isOperatorControl()&&isEnabled()){
             
+            //updating joysticks
             driveStick.update();
             secondStick.update();
+            
+            
             compress.start();
             
             //Cartesian Drive with Deadzones and Turning
@@ -84,6 +89,7 @@ public class RobotTemplate extends SimpleRobot {
                 driveStick.getDeadAxisY(),
                 driveStick.getDeadTwist(),0);
           
+            //calls the 
             moveArm();
             moveHand();
             winch.update(count);
@@ -131,5 +137,10 @@ public class RobotTemplate extends SimpleRobot {
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
         armJoint.stay();
         handJoint.stay();
+    }
+    
+    public void test(){
+        System.out.println("Potetiometer 1"+handP.get());
+        System.out.println("Encoder 1"+winchE.get());
     }
 }
