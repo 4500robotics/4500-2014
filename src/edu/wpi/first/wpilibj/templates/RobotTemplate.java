@@ -39,6 +39,10 @@ public class RobotTemplate extends SimpleRobot {
     Pneumatics armJoint;
     AnalogPotentiometer armP;
     
+    int shootTimeStart=0;
+    
+    boolean shootAndDrive,shooting;
+    
     Pneumatics handJoint;
     AnalogPotentiometer handP;
     
@@ -56,10 +60,14 @@ public class RobotTemplate extends SimpleRobot {
         frontRight= new Talon(3);
         rearRight= new Talon(4);
         
-        armM= new Talon(6);
-        rollers= new Talon(7);
+        armM= new Talon(7);
+        rollers= new Talon(6);
         
         timer=new Timer();
+        timer.start();
+        
+        shootAndDrive = false;
+        shooting = false;
         
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
         compress=new Compressor(1,1);
@@ -84,19 +92,61 @@ public class RobotTemplate extends SimpleRobot {
             
             compress.start();
             
+            //calls the 
+            
+
+            //winch.update(count);
+            
+            //Increase number of teleop cycles
+            count++;
+            
+            if(shootAndDrive){
+                if(secondStick.getButtonPressed(1)){
+                    winch.winchRelease.down();
+                }else{
+                    winch.winchRelease.up();
+                    if(secondStick.getButtonPressed(7)){
+                        winch.winch.set(1.00);
+                    }else{
+                        winch.winch.set(0);
+                    }
+                }
             //Cartesian Drive with Deadzones and Turning
             mainDrive.mecanumDrive_Cartesian(
                 driveStick.getDeadAxisX(),
                 driveStick.getDeadAxisY(),
                 driveStick.getDeadTwist(),0);
-          
-            //calls the 
-            moveArm();
-            moveHand();
-            winch.update(count);
             
-            //Increase number of teleop cycles
-            count++;
+                moveArm();
+                moveHand();
+
+            }else{
+                if(!shooting){
+                    mainDrive.mecanumDrive_Cartesian(
+                        driveStick.getDeadAxisX(),
+                        driveStick.getDeadAxisY(),
+                        driveStick.getDeadTwist(),0);
+                    
+                    winch.winchRelease.up();
+                    
+                    if(secondStick.getButtonPressed(7)){
+                        winch.winch.set(1.00);
+                    }else{
+                        winch.winch.set(0);
+                    }
+                }else{
+                    mainDrive.mecanumDrive_Cartesian(
+                        0,1,0,0);
+                }
+                
+                if(secondStick.getButtonPressed(1)){
+                    shooting=!shooting;
+                }
+            }
+        }
+        
+        if(secondStick.getButtonReleased(12)){
+            shootAndDrive=!shootAndDrive;
         }
     }
     
