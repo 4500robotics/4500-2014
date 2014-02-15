@@ -36,4 +36,9 @@ public class Pneumatics{
         pistTop.set(false);
         pistBottom.set(false);
     }
+    
+    public void open(){
+        pistTop.set(true);
+        pistBottom.set(true);
+    }
 }

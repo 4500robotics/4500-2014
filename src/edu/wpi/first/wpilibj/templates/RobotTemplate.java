@@ -8,12 +8,11 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
 
 public class RobotTemplate extends SimpleRobot {
 
@@ -26,7 +25,12 @@ public class RobotTemplate extends SimpleRobot {
     Talon frontRight;
     Talon rearRight;
     
+    Talon armM;
+    Talon rollers;
+    
     Compressor compress;
+    
+    Timer timer;
     
     RobotDrive mainDrive;
     
@@ -38,14 +42,7 @@ public class RobotTemplate extends SimpleRobot {
     Pneumatics handJoint;
     AnalogPotentiometer handP;
     
-    //objects for running the winch system
-    protected final static int WINDING=0,RELEASING=1, HOLDING=2;
-    Talon winch;
-    Pneumatics winchRelease;
-    WinchState winchS;
-    Encoder winchE;
-    int releaseStartTime=0,releaseWaitTime=100;
-    protected final static double WINCHSPEED=.5,WINCHPOSISTION=.5;
+    Winch winch;
 
     //Counter for teleOp loops
     int count=0;
@@ -58,6 +55,11 @@ public class RobotTemplate extends SimpleRobot {
         rearLeft= new Talon(2);
         frontRight= new Talon(3);
         rearRight= new Talon(4);
+        
+        armM= new Talon(6);
+        rollers= new Talon(7);
+        
+        timer=new Timer();
         
         mainDrive=new RobotDrive(frontLeft,rearLeft,frontRight,rearRight);
         compress=new Compressor(1,1);
@@ -80,7 +82,6 @@ public class RobotTemplate extends SimpleRobot {
             driveStick.update();
             secondStick.update();
             
-            
             compress.start();
             
             //Cartesian Drive with Deadzones and Turning
@@ -94,42 +95,40 @@ public class RobotTemplate extends SimpleRobot {
             moveHand();
             winch.update(count);
             
-            //logger
-            /*if(count%500==0){System.out.println(count+": "+
-                frontLeft.getSpeed()+", "+
-                rearLeft.getSpeed()+", "+
-                frontRight.getSpeed()+", "+
-                rearRight.getSpeed());
-            }*/
-            
             //Increase number of teleop cycles
             count++;
         }
     }
     
     private void moveArm(){
-            if (secondStick.getButtonPressed(6)&&!secondStick.getButtonPressed(7)) {
-                 armJoint.up();
-            }
-            else if (!secondStick.getButtonPressed(6)&&secondStick.getButtonPressed(7)) {
-                 armJoint.down();
-            }
-            else {
-                 armJoint.stay();
-            }
+        armM.set(-1*secondStick.getDeadAxisY());
     }
     
     private void moveHand(){
-        if (secondStick.getButtonPressed(11)&&!secondStick.getButtonPressed(10)) {
+        
+        if (secondStick.getButtonPressed(4)&&!secondStick.getButtonPressed(5)) {
+             rollers.set(.50);
+        }
+        else if (!secondStick.getButtonPressed(4)&&secondStick.getButtonPressed(5)) {
+             rollers.set(-.50);
+        }
+        else {
+             rollers.set(0);
+        }
+        
+        if (secondStick.getButtonPressed(2)&&!secondStick.getButtonPressed(3)) {
              handJoint.up();
         }
-        else if (!secondStick.getButtonPressed(11)&&secondStick.getButtonPressed(10)) {
+        else if (!secondStick.getButtonPressed(2)&&secondStick.getButtonPressed(3)) {
              handJoint.down();
         }
         else {
              handJoint.stay();
         }
 }
+    private void drive(){
+        
+    }
 
     
         
@@ -140,7 +139,5 @@ public class RobotTemplate extends SimpleRobot {
     }
     
     public void test(){
-        System.out.println("Potetiometer 1"+handP.get());
-        System.out.println("Encoder 1"+winchE.get());
     }
 }
