@@ -196,34 +196,33 @@ public class RobotTemplate extends SimpleRobot {
                 }
             break;  
                 
-        case 2:    
-            armM.set(-.12);
-            if(winch.getState()==HOLDING){
-                if(first){
-                    handJoint.up();
-                    System.out.println("Set Releasing");
-                    winch.setState(RELEASING);
-                    first=false;
-                }else{
-                    //handJoint.up();
-                    System.out.println("Done 2");
-                   shooting=0;
-                   first=true;
-                    }
+            case 2:    
+                if(winch.getState()==HOLDING){
+                    if(first){
+                        handJoint.up();
+                        System.out.println("Set Releasing");
+                        winch.setState(RELEASING);
+                        first=false;
+                    }else{
+                        //handJoint.up();
+                        System.out.println("Done 2");
+                       shooting=0;
+                       first=true;
+                        }
                 }else{
                     moveHand();
                     moveArm();
-            }
+                }
+                break;
+            case 3:
+                winch.winch.set(0);
+             if((int)(x*100)<381){//3.8146784110000005 moving down
+                            armM.set(.25);
+                        }else{
+                            shooting=0;
+                            first=true;
+            handJoint.up();
             break;
-        case 3:
-            winch.winch.set(0);
-         if((int)(x*100)<381){//3.8146784110000005 moving down
-                        armM.set(.25);
-                    }else{
-                        shooting=0;
-                        first=true;
-        handJoint.up();
-        break;
          }
         
         default: 
