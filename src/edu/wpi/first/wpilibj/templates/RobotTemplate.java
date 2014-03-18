@@ -47,7 +47,7 @@ public class RobotTemplate extends SimpleRobot {
     //Counter for teleOp loops
     int count=0;
     
-    public  void robotInit(){
+    public void robotInit(){
         driveStick= new JoyStickCustom(1, DEADZONE);
         secondStick=new JoyStickCustom(2, DEADZONE);
         
