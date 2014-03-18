@@ -16,8 +16,8 @@ import java.lang.Math;
  */
 public class JoyStickCustom extends Joystick{
     
-    double deadZone,xAxis,yAxis,twist;
-    boolean buttonPressed[],buttonReleased[];
+    double deadZone,xAxis,yAxis,twist,zAxis;
+    boolean buttonPressed[],buttonReleased[],buttonJustPressed[];
     
     public JoyStickCustom(int port,double deadZoneIn){
         super(port);
@@ -25,14 +25,12 @@ public class JoyStickCustom extends Joystick{
         deadZone=deadZoneIn;
         
         buttonReleased= new boolean[13];
-        
-        for(int x=0;x<=12;x++){
-           buttonReleased[x]= false;
-        }
-        
+        buttonJustPressed= new boolean[13];
         buttonPressed = new boolean[13];
         
         for(int x=0;x<=12;x++){
+           buttonReleased[x]= false;
+           buttonJustPressed[x]= false;
            buttonPressed[x]= false;
         }
         
@@ -40,6 +38,7 @@ public class JoyStickCustom extends Joystick{
     public void update(){
         //compare the current buttons compared to the previous button
         for(int x=1;x<=12;x++){
+           buttonJustPressed[x]= !buttonPressed[x]&&getRawButton(x);
            buttonReleased[x]= buttonPressed[x]&&!getRawButton(x);
         }
         
@@ -51,6 +50,7 @@ public class JoyStickCustom extends Joystick{
         xAxis=getAxis(Joystick.AxisType.kX);
         yAxis=getAxis(Joystick.AxisType.kY);
         twist=getAxis(Joystick.AxisType.kTwist);
+        zAxis=getAxis(Joystick.AxisType.kThrottle);
     }
     
     //create deadzones for the joysticks
@@ -65,9 +65,17 @@ public class JoyStickCustom extends Joystick{
     public double getDeadTwist(){
         return Math.abs(twist)>deadZone ? twist:0;
     }
-
+    
+    public double getDeadAxisZ(){
+        return Math.abs(zAxis)>deadZone ? zAxis:0;
+    }
+        
     public boolean getButtonPressed(int in){
         return buttonPressed[in];
+    }
+    
+    public boolean getButtonJustPressed(int in){
+        return buttonJustPressed[in];
     }
     
     
