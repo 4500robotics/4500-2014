@@ -12,28 +12,36 @@ import edu.wpi.first.wpilibj.Solenoid;
  *
  * @author DE
  */
-public class Pneumatics{
+public class Pneumatics {
     
     Solenoid pistTop;
     Solenoid pistBottom;
     
-    public Pneumatics(int portTop, int portBottom){
+    public Pneumatics(int portTop, int portBottom) {
+        
        pistTop= new Solenoid(portBottom);
        pistBottom= new Solenoid(portTop);
+       
     }
     
-    public void up(){
+    public void up() {
+        
         pistTop.set(true);
         pistBottom.set(false);
+        
     }
     
-    public void down(){
+    public void down() {
+        
         pistTop.set(false);
-        pistBottom.set(true);  
+        pistBottom.set(true);
+        
     }
         
-    public void stay(){
+    public void stay() {
+        
         pistTop.set(false);
         pistBottom.set(false);
+        
     }
 }

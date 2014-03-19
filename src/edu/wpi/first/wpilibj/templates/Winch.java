@@ -18,20 +18,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Winch{
     String states[] =new String[3];
+    
     protected final static int WINDING=0,RELEASING=1, HOLDING1=2, HOLDING2=3;
+    
+    protected final double WINCHSPEED=1;
+    
     int WINCHPOSISTION1=-500;
     
     DigitalInput limitSwitch;
     
-    protected final double WINCHSPEED=1;
-    
     double releaseStartTime=0,releaseWaitTime=1;
     
-    Victor winch;
+    Victor winchM;
     Pneumatics winchRelease;
-    //WinchState winchS;
     Encoder winchE;
-    
+    //WinchState winchS;
     
     private int state;
     
@@ -39,7 +40,7 @@ public class Winch{
     
     Winch(JoyStickCustom inStick){
         winchRelease=new Pneumatics(1,2);
-        winch= new Victor(5);
+        winchM= new Victor(5);
         
         states[0]="WINDING";
         states[1]="RELEASING";
@@ -49,29 +50,31 @@ public class Winch{
         limitSwitch= new DigitalInput(4);
         
         secondStick = inStick;
+        
         winchE= new Encoder(3,2);
         winchE.start();
     }
     
-    public int getState(){
+    public int getState() {
         
         return state;
     }
     
-    public void setState(int in){
+    public void setState(int in) {
         state=in;
     }
  
-    public void update(double time){
-        switch(getState()){
+    public void update(double time) {
+        switch(getState()) {
             case WINDING:
                 winchRelease.up();
-                if(limitSwitch.get()){
-                    winch.set(WINCHSPEED);
-                }else{
-                    winch.set(0);
+                if(limitSwitch.get()) {
+                    winchM.set(WINCHSPEED);
+                } else {
+                    winchM.set(0);
                     setState(HOLDING1);
-                }break;
+                }
+                break;
             case HOLDING1:
                 releaseStartTime=time;
                 winchRelease.up();
@@ -82,19 +85,20 @@ public class Winch{
                 if(time-releaseStartTime<releaseWaitTime){
                     System.out.println("Releasing");
                     winchRelease.down();
-                    winch.set(WINCHSPEED);
+                    winchM.set(WINCHSPEED);
                 }else{
                     setState(WINDING);
-                //<editor-fold defaultstate="collapsed" desc="Redundency">
+                //<editor-fold defaultstate="collapsed" desc="C's Code">
                 /*if(limitSwitch.get()){
                 winchRelease.up();
-                winch.set(WINCHSPEED);
+                winchM.set(WINCHSPEED);
                 }else{
-                winch.set(0);
+                winchM.set(0);
                 setState(HOLDING1);
                 }*/
-//</editor-fold>
+                //</editor-fold>
                 }
+                break;
             }
     }
     
@@ -105,9 +109,9 @@ public class Winch{
         }else{
             winchRelease.up();
             if(secondStick.getButtonPressed(9)&&winchE.get()>-733){
-                winch.set(1.00);
+                winchM.set(1.00);
             }else {
-                    winch.set(0);
+                    winchM.set(0);
             }
         }
         
