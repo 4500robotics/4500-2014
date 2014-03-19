@@ -68,6 +68,7 @@ public class RobotTemplate extends SimpleRobot {
     int count=0;
     
     public void robotInit(){
+        
         driveStick= new JoyStickCustom(1, DEADZONE);
         secondStick=new JoyStickCustom(2, DEADZONE);
         
