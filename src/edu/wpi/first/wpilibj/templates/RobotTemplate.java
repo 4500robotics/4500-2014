@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.lang.Math;
+
 public class RobotTemplate extends SimpleRobot {
 
     JoyStickCustom driveStick;
@@ -105,7 +105,7 @@ public class RobotTemplate extends SimpleRobot {
     }
     
     public void autonomous() {
-        if(timestart<timer.get()){
+        if(timestart<timer.get()) {
             timestart=timer.get();
         }
         
@@ -140,12 +140,14 @@ public class RobotTemplate extends SimpleRobot {
 
     public void operatorControl() {
         while(isOperatorControl()&&isEnabled()){
+            
             //updating joysticks
             driveStick.update();
             secondStick.update();
             
             System.out.println("Ultra: "+ultra.getRangeInches());
             dasCompress.start();
+            
             //Cartesian Drive with Deadzones and Turning
             mainDrive.mecanumDrive_Cartesian(
             driveStick.getDeadAxisX(),
@@ -154,10 +156,11 @@ public class RobotTemplate extends SimpleRobot {
             0);
             
                 
-            if(shooting!=0){
+            if(shooting!=0) {
                 shootUpdate();
                 //winch.setState(RELEASING);
-            }else{
+            } else {
+                
                 //shooting=secondStick.getButtonJustPressed(1)&&winchM.getState()==HOLDING;
                 moveArm();
                 moveHand();
@@ -188,46 +191,57 @@ public class RobotTemplate extends SimpleRobot {
         }
     }
     
-    private void shootUpdate(){
+    private void shootUpdate() {
+        
         double x=armP.get();
         winch.winchM.set(0);
+        
         switch(shooting){
+            
             case 1:
-                if((int)(x*100)>LOWSHOOTSTOP){//3.059408287 moving up
+                if((int)(x*100)>LOWSHOOTSTOP) {//3.059408287 moving up
                     armM.set(-1);
-                }else{
+                } else {
+                    
                     shooting=2;
                     armM.set(-.05);
                     System.out.println("Done 1");
+                    
                 }
-            break;  
+                break;  
                
-            case 2:    
-                if(winch.getState()==HOLDING){
-                    if(first){
+            case 2:  
+                
+                if(winch.getState()==HOLDING) {
+                    if(first) {
                         handJoint.up();
                         System.out.println("Set Releasing");
                         winch.setState(RELEASING);
                         first=false;
-                    }else{
+                    } else {
                         //handJoint.up();
                         System.out.println("Done 2");
                        shooting=0;
                        first=true;
-                        }
-                }else{
+                    }
+                } else {
                     moveHand();
                     moveArm();
                 }
                 break;
+                
             case 3:
+                
                 winch.winchM.set(0);
-                if((int)(x*100)<381){//3.8146784110000005 moving down
+                
+                if((int)(x*100)<381) {//3.8146784110000005 moving down
                     armM.set(.25);
-                }else{
+                } else {
+                    
                     shooting=0;
                     first=true;
                     handJoint.up();
+                    
                 }
                 break;
         
@@ -236,18 +250,21 @@ public class RobotTemplate extends SimpleRobot {
     }
     }
     
-    private void moveArm(){
+    private void moveArm() {
+        
         double z=armP.get(),x=secondStick.getDeadAxisY();
         System.out.println("pot: "+z);
-        switch(armMoving){
+        
+        switch(armMoving) {
             case 0:
                 armM.set(-0.12);
-                 if(Math.abs(secondStick.getDeadAxisY())>.25){
+                
+                if(Math.abs(secondStick.getDeadAxisY())>.25){
                     double Y=(x)/(Math.abs(x));
                     armMoving=(int) (Y); //reminder 1 is up, -1 is down
-                 }else if(secondStick.getButtonPressed(11)){
+                } else if(secondStick.getButtonPressed(11)) {
                      //armMoving=2;
-                 }
+                }
                  
                  //<editor-fold defaultstate="collapsed" desc="C's Code">
                  /*if(Math.abs(x)>0){
@@ -258,6 +275,7 @@ public class RobotTemplate extends SimpleRobot {
                  //</editor-fold>
                  
                  break;
+                
             case 1: //moving up
                 if((int)(z*100)>321) { //3.059408287 moving up
                    armM.set(-1);
@@ -266,6 +284,7 @@ public class RobotTemplate extends SimpleRobot {
                     armM.set(0);
                 }
                 break;
+                
             case -1://moving down
                 if((int)(z*100)<390) { //3.8146784110000005 moving doen
                     armM.set(.33);
@@ -274,6 +293,7 @@ public class RobotTemplate extends SimpleRobot {
                     armM.set(0);
                 }
                 break;
+                
             case 2:
                 if((int)(z*100)>371) {
                     armM.set(-1);
@@ -298,12 +318,13 @@ public class RobotTemplate extends SimpleRobot {
     }*/
     //</editor-fold>
     
-    private void moveHand(){
+    private void moveHand() {
+        
         if (secondStick.getButtonPressed(2)&&!secondStick.getButtonPressed(3)) {
-             handJoint.up();
+            handJoint.up();
         }
         else if (!secondStick.getButtonPressed(2)&&secondStick.getButtonPressed(3)) {
-             handJoint.down();
+            handJoint.down();
         }
         else {
              handJoint.stay();
@@ -320,7 +341,7 @@ public class RobotTemplate extends SimpleRobot {
         }
 }
 
-    public void log(){
+    public void log() {
         SmartDashboard.putNumber("Front Left Drive",frontLeft.get());
         SmartDashboard.putNumber("Rear Left Drive",rearLeft.get());
         SmartDashboard.putNumber("Front Right Drive",frontRight.get());
@@ -336,16 +357,20 @@ public class RobotTemplate extends SimpleRobot {
         
     }
         
-    public void disabled(){
+    public void disabled() {
+        
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
         handJoint.stay();
+        
     }
     
-    public void setAuto(boolean inB){
+    public void setAuto(boolean inB) {
+        
         auto=inB;
         
     }
     
-    public void test(){
+    public void test() {
+        
     }
 }

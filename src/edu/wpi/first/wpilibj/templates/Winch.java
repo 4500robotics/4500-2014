@@ -99,6 +99,9 @@ public class Winch{
                 //</editor-fold>
                 }
                 break;
+            default:
+                System.out.println("ERROR in Winch");
+                break;
             }
     }
     
