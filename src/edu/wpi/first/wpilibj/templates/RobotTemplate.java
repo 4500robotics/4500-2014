@@ -25,7 +25,7 @@ public class RobotTemplate extends SimpleRobot {
     JoyStickCustom secondStick;
     final double DEADZONE=.20;
     
-    final int LOWSHOOTSTOP=321,HIGHSHOOTSHOP=310;
+    final int LOWPOSITION=390,HIGHPOSITION=321;
     
     Talon frontLeft;
     Talon rearLeft;
@@ -49,7 +49,7 @@ public class RobotTemplate extends SimpleRobot {
     AnalogPotentiometer handP;
     
     boolean first=true,auto=true;
-    int shooting=0;
+    int shooting=0,armPosition;
     Victor armM,rollers;
     
     int armMoving=0;//0=not moving, 1 moving up, -1 moving down
@@ -58,8 +58,6 @@ public class RobotTemplate extends SimpleRobot {
     Winch winch;
     WinchState winchS;
     Encoder winchE;
-    int releaseStartTime=0,releaseWaitTime=100;
-    protected final static double WINCHSPEED=.5,WINCHPOSISTION=.5;
     
     double timestart=0;
     
@@ -128,8 +126,24 @@ public class RobotTemplate extends SimpleRobot {
         
         winch.winchRelease.up();
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);*/
-        while(timer.get()-timestart<1){
+        while(timer.get()-timestart<2){
+            if(timer.get()-timestart<.30){
+              rollers.set(1);
+            }else{
+                if((int)(armP.get()*100)<321){//3.8146784110000005 moving doen
+                        armM.set(.33);
+                }else{
+                    armMoving=0;
+                    armM.set(-.12);
+                }
+                mainDrive.mecanumDrive_Cartesian(0, -1, 0, 0);
+                shootUpdate();
+            }
+        }
+        shooting=1;
+        while(timer.get()-timestart<3){
             mainDrive.mecanumDrive_Cartesian(0, -1, 0, 0);
+            shootUpdate();
         }
         mainDrive.mecanumDrive_Cartesian(0, 0, 0, 0);
     }
@@ -149,7 +163,6 @@ public class RobotTemplate extends SimpleRobot {
             driveStick.getDeadAxisZ(),
             0);
             
-                
             if(shooting!=0){
                 shootUpdate();
                 //winch.setState(RELEASING);
@@ -157,23 +170,19 @@ public class RobotTemplate extends SimpleRobot {
                 //shooting=secondStick.getButtonJustPressed(1)&&winch.getState()==HOLDING;
                 moveArm();
                 moveHand();
-                
-                
-
                 if(secondStick.getButtonPressed(9)&&winch.limitSwitch.get()){
-                    //System.out.println("hello");
                     winch.winch.set(1);}
-                else {//System.out.println("bye");
-                    winch.winch.set(0);}
-                
+                else {
+                    winch.winch.set(0);
+                }
                 if(secondStick.getButtonPressed(1)) {
                     shooting=1;
-                } else if (secondStick.getButtonPressed(10)){
+                } else{ if (secondStick.getButtonPressed(10)){
                     winch.winchRelease.down();
                 }
                 else{ 
                     winch.winchRelease.up();
-                    }
+                    }}
             }
              
             //calls the winch
@@ -187,7 +196,7 @@ public class RobotTemplate extends SimpleRobot {
         winch.winch.set(0);
         switch(shooting){
             case 1:
-            if((int)(x*100)>LOWSHOOTSTOP){//3.059408287 moving up
+            if((int)(x*100)>HIGHPOSITION){//3.059408287 moving up
                 armM.set(-1);
             }else{
                 shooting=2;
@@ -195,7 +204,6 @@ public class RobotTemplate extends SimpleRobot {
                 System.out.println("Done 1");
                 }
             break;  
-                
             case 2:    
                 if(winch.getState()==HOLDING){
                     if(first){
@@ -213,21 +221,21 @@ public class RobotTemplate extends SimpleRobot {
                     moveHand();
                     moveArm();
                 }
-                break;
+            break;
             case 3:
                 winch.winch.set(0);
-             if((int)(x*100)<381){//3.8146784110000005 moving down
+                if((int)(x*100)<LOWPOSITION){//3.8146784110000005 moving down
                             armM.set(.25);
                         }else{
                             shooting=0;
                             first=true;
             handJoint.up();
+                }
             break;
-         }
         
         default: 
             break;
-    }
+        }
     }
     
     private void moveArm(){
@@ -253,37 +261,48 @@ public class RobotTemplate extends SimpleRobot {
                    armM.set(-1);
                 }else{
                     armMoving=0;
-                    armM.set(0);
                 }
                 break;
             case -1://moving down
-                if((int)(z*100)<390){//3.8146784110000005 moving doen
+                if((int)(z*100)<390){//3.8146784110000005 moving down
                     armM.set(.33);
                 }else{
                     armMoving=0;
-                    armM.set(0);
                 }break;
             case 2:
-            if((int)(z*100)>371){
-            armM.set(-1);
-            }else if((int)(z*100)<369){
-            armM.set(1);
-            }else{
-            armMoving=0;
-            }
+                if((int)(z*100)>371){
+                armM.set(-1);
+                }else if((int)(z*100)<369){
+                armM.set(1);
+                }else{
+                armMoving=0;
+                }
             break;
             }
     }
-
-             /*if (secondStick.getDeadAxisY()>0) {
-             
-             }
-             else if (secondStick.getDeadAxisY()<0) {
-             armJoint.down();
-             }
-             else {
-             armJoint.stay();
-             }*/
+    
+    private void moveArmTo(){
+        double x=secondStick.getDeadAxisY();
+        
+        if(secondStick.getDeadAxisY()>.25){
+                    armPosition=LOWPOSITION;
+                 }else if(secondStick.getDeadAxisY()<-.25){
+                     armPosition=HIGHPOSITION;
+                 }
+    }
+    
+    private void updateArmPosition(){
+        double x=armP.get();
+        if((int)(x*100+5)>armPosition){//3.059408287 moving up
+                armM.set(-1);
+            }else{
+                if((int)(x*100-5)<armPosition){
+                    armM.set(.5);
+                }
+                armM.set(-.05);
+            }
+        
+    }
     
     private void moveHand(){
         if (secondStick.getButtonPressed(2)&&!secondStick.getButtonPressed(3)) {
